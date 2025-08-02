@@ -70,6 +70,7 @@ jobs:
      - name: Start Anvil with fork
        run: |
          nohup anvil \
+           --host 0.0.0.0 \
            --block-time 1 \
            --port ${{ env.ANVIL_DEFAULT_PORT }} &
 
