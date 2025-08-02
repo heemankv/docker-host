@@ -90,24 +90,7 @@ jobs:
 
      - name: Run Madara
        run: |
-         nohup ./target/release/madara \
-           --base-path ../madara-db \
-           --rpc-port 9944 \
-           --rpc-cors "*" \
-           --rpc-external \
-           --rpc-admin \
-           --sequencer \
-           --chain-config-path ./configs/madara.yml \
-           --feeder-gateway-enable \
-           --gateway-enable \
-           --gateway-external \
-           --gateway-port 8080 \
-           --no-l1-sync \
-           --strk-gas-price 0 \
-          --strk-blob-gas-price 0 \
-          --gas-price 0 \
-          --blob-gas-price 0 \
-          --chain-config-override block_time=3s &
+         nohup ./target/release/madara &
 
           # Store the PID for later cleanup
           echo "MADARA_PID=$!" >> $GITHUB_ENV
