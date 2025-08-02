@@ -88,6 +88,42 @@ jobs:
            exit 1
          fi
 
+     - name: Run Madara
+       run: |
+         nohup ./target/release/madara \
+           --base-path ../madara-d-2b \
+           --rpc-port 9944 \
+           --rpc-cors "*" \
+           --rpc-external \
+           --rpc-admin \
+           --sequencer \
+           --chain-config-path configs/presets/devnet.yaml \
+           --feeder-gateway-enable \
+           --gateway-enable \
+           --gateway-external \
+           --gateway-port 8080 \
+           --no-l1-sync \
+           --strk-gas-price 0 \
+          --strk-blob-gas-price 0 \
+          --gas-price 0 \
+          --blob-gas-price 0 \
+          --chain-config-override block_time=3s &
+
+          # Store the PID for later cleanup
+          echo "MADARA_PID=$!" >> $GITHUB_ENV
+
+          # Wait for Madara to start
+          echo "Waiting for Madara to start..."
+          timeout 60s bash -c 'until curl -s http://localhost:8080/gateway &>/dev/null; do sleep 3; echo "Retrying Madara gateway..."; done'
+
+          if [ $? -eq 0 ]; then
+            echo "Madara is running with gateway on: http://localhost:8080/gateway"
+            echo "Madara RPC running on: http://localhost:9944"
+          else
+            echo "Failed to connect to Madara within timeout"
+            exit 1
+          fi
+
      - name: Test Docker connectivity to Anvil
        env:
           ANVIL_URL: "http://host.docker.internal:8545"
