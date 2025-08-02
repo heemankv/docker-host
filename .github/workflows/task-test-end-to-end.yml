@@ -91,13 +91,13 @@ jobs:
      - name: Run Madara
        run: |
          nohup ./target/release/madara \
-           --base-path ../madara-d-2b \
+           --base-path ../madara-db \
            --rpc-port 9944 \
            --rpc-cors "*" \
            --rpc-external \
            --rpc-admin \
            --sequencer \
-           --chain-config-path configs/presets/devnet.yaml \
+           --chain-config-path ./configs/madara.yml \
            --feeder-gateway-enable \
            --gateway-enable \
            --gateway-external \
