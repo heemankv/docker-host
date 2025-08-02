@@ -88,10 +88,17 @@ jobs:
          fi
 
      - name: Test Docker connectivity to Anvil
+       env:
+          ANVIL_URL: "http://host.docker.internal:8545"
+          JSON_DATA: '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
        run: |
-          echo "Testing Docker connectivity to Anvil..."
+          echo "Testing Docker connectivity to Anvil at $ANVIL_URL..."
           docker run --rm \
-            --add-host host.docker.internal=host-gateway curlimages/curl:latest curl -v --connect-timeout 10 --max-time 30 -X POST \
-            --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+            --add-host=host.docker.internal:host-gateway \
+            -e ANVIL_URL="$ANVIL_URL" \
+            -e JSON_DATA="$JSON_DATA" \
+            curlimages/curl:latest \
+            curl -v --connect-timeout 10 --max-time 30 -X POST \
+            --data "$JSON_DATA" \
             -H "Content-Type: application/json" \
-            http://host.docker.internal:8545 || echo "Curl failed with exit code $?"
+              "$ANVIL_URL" || echo "Curl failed with exit code $?"
